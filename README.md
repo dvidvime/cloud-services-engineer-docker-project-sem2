@@ -9,6 +9,8 @@
 В корневой директории проекта выполнить `docker compose --profile prod up -d`
 * для dev окружения: `docker compose --profile dev up`
 
+Сервис будет доступен на 80 порту указанного NGINX_SERVER_NAME (например http://localhost)
+
 ### Описание
 * backend собран на основе легковесного образа alpine:3.21 с использованием multi-stage, дополнительно установлен curl для healthcheck (размер 28.69 MB) 
 
@@ -18,9 +20,9 @@
 * изолированные сети
 * перезапуск контейнеров
 * healthchecks
-* запуск frontend после backend
-* убраны лишние capabilities
-* лимиты ресурсов
+* запуск frontend после backend (для prod окружения)
+* убраны лишние capabilities (для prod окружения)
+* лимиты ресурсов (для prod окружения)
 
 ### Параметры
 
