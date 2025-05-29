@@ -1,6 +1,7 @@
 services:
   backend:
-    build: ./backend
+    image: dvidvi/docker-project-backend:latest
+    platform: linux/x86_64
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8081/health"]
@@ -10,14 +11,28 @@ services:
       start_period: 40s
     networks:
       - backend
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 1G
+        reservations:
+          cpus: 0.5
+          memory: 512M
 
   frontend: 
-    build: ./frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    image: dvidvi/docker-project-frontend:latest
+    platform: linux/x86_64
     restart: unless-stopped
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     environment:
-      NGINX_SERVER_NAME: _
+      NGINX_SERVER_NAME: localhost
       NGINX_BACKEND_ADDRESS: http://backend:8081/
     ports: 
       - 80:8080
@@ -30,6 +45,18 @@ services:
     networks:
       - frontend
       - backend
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 512M 
+        reservations:
+          cpus: 0.25
+          memory: 256M
 
 networks:
   frontend:

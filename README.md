@@ -6,8 +6,9 @@
 
 ### Запуск
 
-В корневой директории проекта выполнить `docker compose --profile prod up -d`
-* для dev окружения: `docker compose --profile dev up`
+В корневой директории проекта выполнить:
+* для dev окружения - выполняется сборка: `docker compose up`
+* для prod - будет запущен последний образ из dockerhub с повышенной безопасностью:  `docker compose -f docker-compose.prod.yml up -d`
 
 Сервис будет доступен на 80 порту указанного NGINX_SERVER_NAME (например http://localhost)
 
