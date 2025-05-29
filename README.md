@@ -6,7 +6,8 @@
 
 ### Запуск
 
-В корневой директории проекта выполнить `docker compose up`
+В корневой директории проекта выполнить `docker compose --profile prod up -d`
+* для dev окружения: `docker compose --profile dev up`
 
 ### Описание
 * backend собран на основе легковесного образа alpine:3.21 с использованием multi-stage, дополнительно установлен curl для healthcheck (размер 28.69 MB) 

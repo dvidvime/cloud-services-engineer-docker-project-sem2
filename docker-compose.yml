@@ -1,7 +1,6 @@
 services:
   backend:
-    build: ./backend
-    container_name: backend
+    image: dvidvi/docker-project-backend:latest
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8081/health"]
@@ -21,14 +20,15 @@ services:
         reservations:
           cpus: 0.5
           memory: 512M
+    profiles:
+      - prod
 
   frontend: 
     depends_on:
       backend:
         condition: service_healthy
-    build: ./frontend
+    image: dvidvi/docker-project-frontend:latest
     restart: unless-stopped
-    container_name: frontend
     volumes:
       - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     environment:
@@ -57,6 +57,44 @@ services:
         reservations:
           cpus: 0.25
           memory: 256M
+    profiles:
+      - prod
+
+  backend-dev:
+    build: ./backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - backend
+    profiles:
+      - dev
+
+  frontend-dev: 
+    build: ./frontend
+    restart: unless-stopped
+    volumes:
+      - ./nginx/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    environment:
+      NGINX_SERVER_NAME: localhost
+      NGINX_BACKEND_ADDRESS: http://backend-dev:8081/
+    ports: 
+      - 80:8080
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - frontend
+      - backend
+    profiles:
+      - dev
 
 networks:
   frontend:

@@ -1,12 +1,13 @@
-FROM node:16-alpine AS build
+FROM node:24-alpine AS build
 
+ARG NODE_OPTIONS=--openssl-legacy-provider
 ARG VUE_APP_API_URL=/api
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
